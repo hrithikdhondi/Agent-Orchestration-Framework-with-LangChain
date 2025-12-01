@@ -1,0 +1,17 @@
+# --- Environment files (VERY IMPORTANT) ---
+.env
+*.env
+
+# --- Python cache ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+
+# --- VSCode settings ---
+.vscode/

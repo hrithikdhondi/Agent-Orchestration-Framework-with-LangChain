@@ -4,14 +4,17 @@ Agent Orchestration Framework (LangChain + Gemini)
 This project implements a simple AI Agent System using LangChain, LangGraph, and Google Gemini.
 The agent can call multiple custom tools to answer user queries more accurately.
 
-📌 Features
+**📌 Features:**
+
 Agents
 
 create_basic_gemini_agent() – simple agent with a fixed system prompt
 
 create_template_gemini_agent() – agent using PromptTemplate (recommended)
 
-Tools
+
+
+**Tools:**
 
 greet(name) – returns a greeting
 
@@ -23,32 +26,44 @@ gen_password(length) – generates secure passwords
 
 get_time(tz) – returns 12-hour formatted time (UTC / IST / LOCAL)
 
-📂 Project Files
+
+**📂 Project Files:**
+
 agents.py      - agent creation (basic + template)
+
 tools.py       - tool definitions
+
 main.py        - interactive chatbot
+
 demo.py        - quick test for all tools using the agent
+
 .env.example   - API key template
+
 requirements.txt
 
-🔧 Setup
+
+**🔧 Setup:**
+
 python -m venv .venv
+
 .venv\Scripts\activate
+
 pip install -r requirements.txt
 
 
-Create a .env file:
-
+**Create a .env file:**
 GOOGLE_API_KEY=your_api_key_here
 
-▶️ Run the Agent (interactive)
+
+**▶️ Run the Agent (interactive):**
 python main.py
 
-🧪 Quick Tool Demo
+
+**🧪 Quick Tool Demo:**
 python demo.py
 
 
-This will test:
+**This will test:**
 
 Weather
 
@@ -58,7 +73,7 @@ Password generation
 
 Time tool
 
-✔ Week 1 & 2 Completed
+**✔ Milestone 1 Completed**
 
 Basic agent + environment setup
 

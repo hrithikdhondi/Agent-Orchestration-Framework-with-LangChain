@@ -1,6 +1,4 @@
-"""Interactive CLI for the Gemini-backed agent. Save as main.py
-Run with: python main.py
-"""
+
 from agents import create_template_gemini_agent
 
 

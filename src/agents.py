@@ -1,4 +1,4 @@
-"""Creates a LangChain v1.1 agent using Google's Gemini LLM. Save as agents.py"""
+
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.agents import create_agent
 from langgraph.checkpoint.memory import MemorySaver

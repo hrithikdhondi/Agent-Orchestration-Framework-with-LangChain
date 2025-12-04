@@ -1,4 +1,4 @@
-"""Helper tools for the LangChain agent. Save as tools.py"""
+
 import requests
 from langchain_core.tools import tool
 import ast

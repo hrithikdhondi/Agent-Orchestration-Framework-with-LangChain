@@ -6,10 +6,64 @@ import math
 import secrets
 import string
 from datetime import datetime, timezone, timedelta
+import functools
+import json
+import os
+import time
+from pathlib import Path
+from typing import Optional
+
+
+# Milestone 2
+def log_tool(tool_name: str):
+    """
+    Decorator that prints Thought/Action/Action Input/Observation blocks
+    when the tool is executed. Keeps the original function behavior.
+    """
+    def decorator(fn):
+        @functools.wraps(fn)
+        def wrapper(*args, **kwargs):
+            # Thought: ideally produced by the agent; we produce a helpful hint
+            print("\n# Thought: I should use the", tool_name, "tool.")
+            print("# Action:", tool_name)
+
+            # Format the action input (args/kwargs) nicely
+            try:
+                if kwargs and args:
+                    action_input = {"args": args, "kwargs": kwargs}
+                elif kwargs:
+                    action_input = kwargs
+                else:
+                    # if single arg, print it plainly
+                    action_input = args[0] if len(args) == 1 else args
+                action_input_str = json.dumps(action_input, default=str)
+            except Exception:
+                action_input_str = str(action_input)
+
+            print("# Action Input:", action_input_str)
+
+            # Execute tool and capture the result
+            start = time.time()
+            result = fn(*args, **kwargs)
+            duration = time.time() - start
+
+            # Observation: show tool output
+            # Keep it one-line if it's long
+            obs = result
+            if isinstance(obs, str) and "\n" in obs:
+                obs = obs.splitlines()[0] + " ..."
+
+            print("# Observation:", obs)
+            print(f"# (tool runtime: {duration:.3f}s)\n")
+
+            return result
+        return wrapper
+    return decorator
 
 
 # WEEK - 2 upgrades
 @tool
+@log_tool("greet")
 def greet(name: str) -> str:
     """Greet a person by name. Input should be the person's name."""
     name = name.strip()
@@ -19,6 +73,7 @@ def greet(name: str) -> str:
 
 
 @tool
+@log_tool("get_weather")
 def get_weather(city: str) -> str:
     """Get current temperature of a city. Input should be the city name."""
     city = city.strip() or ""
@@ -42,6 +97,7 @@ def get_weather(city: str) -> str:
         return f"Unexpected error while fetching weather: {e}"
 
 @tool
+@log_tool("calculate")
 def calculate(expression: str) -> str:
     """
     Safely evaluate a math expression and return the result.
@@ -83,6 +139,7 @@ def calculate(expression: str) -> str:
 
 # --- Password generator tool ---
 @tool
+@log_tool("gen_password")
 def gen_password(length: int = 16, require_symbols: bool = True) -> str:
     """
     Generate a secure password. Returns the password (not stored).
@@ -105,6 +162,7 @@ def gen_password(length: int = 16, require_symbols: bool = True) -> str:
 
 # --- Time / date tool ---
 @tool
+@log_tool("get_time")
 def get_time(tz: str = "UTC") -> str:
     """
     Return current date/time in 12-hour format with AM/PM.
@@ -132,7 +190,122 @@ def get_time(tz: str = "UTC") -> str:
     except Exception as e:
         return f"Time tool error: {e}"
 
+# added other tools in Milestone 2
+@tool
+@log_tool("read_file")
+def read_file(path: str) -> str:
+    """
+    Safely read and return the content of a file.
+    Supports text-based formats: .txt, .md, .json, .py, etc.
+    Usage: read_file "notes.txt"
+    """
+    if not path:
+        return "No file path provided."
+
+    # Clean the path to avoid security issues
+    path = path.strip()
+
+    if not os.path.exists(path):
+        return f"File not found: {path}"
+
+    # Prevent reading binary files as text
+    allowed_extensions = (".txt", ".md", ".json", ".py", ".log")
+
+    if not path.endswith(allowed_extensions):
+        return f"Unsupported file type. Allowed: {allowed_extensions}"
+
+    try:
+        # Handle JSON separately for nice formatting
+        if path.endswith(".json"):
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            return json.dumps(data, indent=2)
+
+        # All other text files
+        with open(path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+            # Avoid flooding output
+            if len(content) > 1500:
+                return content[:1500] + "\n\n... (truncated)"
+            
+            return content
+
+    except Exception as e:
+        return f"Error reading file: {e}"
+
+
+@tool
+@log_tool("write_file")
+def write_file(path: str, content: str, overwrite: bool = False) -> str:
+    """
+    Write content to a text file.
+    - If overwrite=False and file exists -> returns a safe message (no write).
+    - If overwrite=True -> replaces file contents.
+    Allowed extensions: .txt, .md, .json, .log, .py
+    """
+    try:
+        if not path or content is None:
+            return "Usage: write_file(path, content, overwrite=False)"
+
+        # Normalize and restrict to prevent directory traversal outside project
+        base = Path(".").resolve()
+        target = (base / Path(path)).resolve()
+        if not str(target).startswith(str(base)):
+            return "Security error: path outside allowed directory."
+
+        allowed = {".txt", ".md", ".json", ".log", ".py"}
+        if target.suffix not in allowed:
+            return f"Unsupported file extension {target.suffix}. Allowed: {allowed}"
+
+        if target.exists() and not overwrite:
+            return f"File already exists: {path}. Use overwrite=True to replace."
+
+        # Ensure parent dirs exist
+        target.parent.mkdir(parents=True, exist_ok=True)
+
+        # Write file
+        mode = "w"  # overwrite
+        with open(target, mode, encoding="utf-8") as f:
+            f.write(content)
+
+        return f"Wrote file: {path}"
+    except Exception as e:
+        return f"Write error: {e}"
+
+
+@tool
+@log_tool("append_file")
+def append_file(path: str, content: str) -> str:
+    """
+    Append content to a text file. Creates file if it doesn't exist.
+    """
+    try:
+        if not path or content is None:
+            return "Usage: append_file(path, content)"
+
+        base = Path(".").resolve()
+        target = (base / Path(path)).resolve()
+        if not str(target).startswith(str(base)):
+            return "Security error: path outside allowed directory."
+
+        allowed = {".txt", ".md", ".json", ".log", ".py"}
+        if target.suffix not in allowed:
+            return f"Unsupported file extension {target.suffix}. Allowed: {allowed}"
+
+        target.parent.mkdir(parents=True, exist_ok=True)
+
+        with open(target, "a", encoding="utf-8") as f:
+            f.write(content)
+
+        return f"Appended to file: {path}"
+    except Exception as e:
+        return f"Append error: {e}"
 
 def get_tools():
     """Return a list of tool functions decorated with @tool."""
-    return [greet, get_weather, calculate, gen_password, get_time]
+    return [
+    greet, get_weather, calculate, gen_password, get_time,
+    read_file, write_file, append_file,
+]
+

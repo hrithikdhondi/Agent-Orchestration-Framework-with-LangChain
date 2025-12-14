@@ -82,3 +82,29 @@ Tools integrated
 Template-based agent
 
 Demo script included
+
+📌 Milestone 2: Tool Integration & API Calling
+
+Objective:
+Extend the LangChain agent with custom tools, API access, and robust error handling.
+
+Key Updates:
+
+Integrated multiple custom tools using LangChain @tool
+
+Added log_tool decorator for Thought–Action–Observation logging
+
+Implemented error handling for:
+
+Invalid user inputs
+
+API failures (timeouts, bad responses)
+
+Unsafe or invalid calculations
+
+Guided the agent via prompts to use tools appropriately
+
+Outcome:
+A reliable tool-enabled agent with transparent execution and graceful error recovery.
+
+If you want a 1-paragraph version or bullet-only ultra-short, I can trim it more.

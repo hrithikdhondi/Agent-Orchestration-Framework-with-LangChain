@@ -10,8 +10,9 @@ import functools
 import json
 import os
 import time
+import re
 from pathlib import Path
-from typing import Optional
+from typing import List
 
 
 # Milestone 2
@@ -302,10 +303,189 @@ def append_file(path: str, content: str) -> str:
     except Exception as e:
         return f"Append error: {e}"
 
+#Milestone 3 upgrades
+
+#Text Analyzer Tool
+@tool
+def analyze_text(text: str) -> str:
+    """
+    Analyze text and extract key points.
+    Useful for research analysis before summarization.
+    """
+    if not text:
+        return "No text provided."
+
+    # Split into sentences
+    sentences = re.split(r'(?<=[.!?])\s+', text)
+
+    # Pick top sentences as key points (simple heuristic)
+    key_points = sentences[:5]
+
+    result = {
+        "key_points": key_points,
+        "sentence_count": len(sentences)
+    }
+
+    return json.dumps(result, indent=2)
+
+#Keyword Extractor Tool
+@tool
+def extract_keywords(text: str, top_k: int = 5) -> str:
+    """
+    Extract important keywords from text.
+    """
+    if not text:
+        return "No text provided."
+
+    words = re.findall(r'\b[a-zA-Z]{4,}\b', text.lower())
+    freq = {}
+
+    for w in words:
+        freq[w] = freq.get(w, 0) + 1
+
+    sorted_words = sorted(freq.items(), key=lambda x: x[1], reverse=True)
+    keywords = [w for w, _ in sorted_words[:top_k]]
+
+    return json.dumps({"keywords": keywords}, indent=2)
+
+#Task Decomposer Tool
+@tool
+def decompose_task(goal: str) -> str:
+    """
+    Break a goal into structured subtasks.
+    """
+    if not goal:
+        return "No goal provided."
+
+    subtasks = [
+        f"Understand the goal: {goal}",
+        "Identify required information",
+        "Collect data if needed",
+        "Organize findings",
+        "Prepare final output"
+    ]
+
+    return json.dumps(
+        {"goal": goal, "subtasks": subtasks},
+        indent=2
+    )
+
+#Agent Logger / Trace Tool
+@tool
+def log_agent_step(agent_name: str, action: str) -> str:
+    """
+    Log what an agent is doing at a specific step.
+    """
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    log_entry = {
+        "agent": agent_name,
+        "action": action,
+        "time": timestamp
+    }
+
+    print(f"[AGENT LOG] {log_entry}")
+
+    return "Agent step logged successfully."
+
+#Shared Memory Search Tool
+@tool
+def search_shared_memory(query: str, memory_context: str) -> str:
+    """
+    Search shared memory context for relevant information.
+    (Context is passed from orchestrator)
+    """
+    if not query:
+        return "No query provided."
+
+    if not memory_context:
+        return "Shared memory is empty."
+
+    # Simple relevance check
+    matches = []
+    for line in memory_context.split("\n"):
+        if query.lower() in line.lower():
+            matches.append(line)
+
+    if not matches:
+        return "No relevant memory found."
+
+    return json.dumps(
+        {"relevant_memory": matches[:3]},
+        indent=2
+    )
+
+#Shared Memory Save
+@tool
+def prepare_memory_entry(content: str, tag: str = "general") -> str:
+    """
+    Prepare a structured memory entry to store in shared memory.
+    """
+    if not content:
+        return "No content to save."
+
+    entry = {
+        "tag": tag,
+        "content": content,
+        "saved_at": datetime.now().isoformat()
+    }
+
+    return json.dumps(entry, indent=2)
+
+#JSON Structurer Tool
+@tool
+def structure_as_json(title: str, points: List[str]) -> str:
+    """
+    Convert text points into structured JSON.
+    """
+    if not title or not points:
+        return "Title or points missing."
+
+    structured = {
+        "title": title,
+        "items": points
+    }
+
+    return json.dumps(structured, indent=2)
+
+#Table Generator Tool
+@tool
+def generate_markdown_table(headers: List[str], rows: List[List[str]]) -> str:
+    """
+    Generate a markdown table from headers and rows.
+    """
+    if not headers or not rows:
+        return "Headers or rows missing."
+
+    table = "| " + " | ".join(headers) + " |\n"
+    table += "| " + " | ".join(["---"] * len(headers)) + " |\n"
+
+    for row in rows:
+        table += "| " + " | ".join(row) + " |\n"
+
+    return table
+
 def get_tools():
     """Return a list of tool functions decorated with @tool."""
     return [
-    greet, get_weather, calculate, gen_password, get_time,
-    read_file, write_file, append_file,
-]
+        # Milestone 2 tools
+        greet,
+        get_weather,
+        calculate,
+        gen_password,
+        get_time,
+        read_file,
+        write_file,
+        append_file,
+
+        # Milestone 3 tools
+        analyze_text,
+        extract_keywords,
+        decompose_task,
+        log_agent_step,
+        search_shared_memory,
+        prepare_memory_entry,
+        structure_as_json,
+        generate_markdown_table,
+    ]
 

@@ -48,9 +48,7 @@ def run_multi_agent_workflow(user_query: str):
     researcher = create_research_agent()
     summarizer = create_summarizer_agent()
     
-    # ========================================
-    # STEP 1: PLANNER (with memory + shared knowledge)
-    # ========================================
+    # PLANNER (with memory + shared knowledge)
     planner_history = agent_memory.get_agent_memory(planner_id)
     planner_context = f"""
         Previous conversations: {planner_history.messages[-3:] if planner_history.messages else 'None'}
@@ -89,9 +87,8 @@ def run_multi_agent_workflow(user_query: str):
     if skip_research:
         raw_data = "No research required. Generate answer directly."
     else:
-         # ========================================
-        # STEP 2: RESEARCHER (with memory + shared knowledge)
-        # ========================================
+
+        # RESEARCHER (with memory + shared knowledge)
         researcher_history = agent_memory.get_agent_memory(researcher_id)
         researcher_context = f"""
             Previous research: {researcher_history.messages[-2:] if researcher_history.messages else 'None'}
@@ -116,15 +113,10 @@ def run_multi_agent_workflow(user_query: str):
         print("="*50)
         print(raw_data)
 
-        
-   
-    
     if not raw_data.strip():
         raw_data = "No research data available."
 
-    # ========================================
-    # STEP 3: SUMMARIZER (with full context)
-    # ========================================
+    # SUMMARIZER (with full context)
     summarizer_history = agent_memory.get_agent_memory(summarizer_id)
     full_context = f"""
         Original Query: {user_query}
@@ -146,9 +138,7 @@ def run_multi_agent_workflow(user_query: str):
     agent_memory.add_message(summarizer_id, "user", raw_data)
     agent_memory.add_message(summarizer_id, "assistant", final_answer)
     
-    # ========================================
-    # STEP 4: SAVE TO SHARED MEMORY
-    # ========================================
+    # SAVE TO SHARED MEMORY
     shared_fact = f"Q: {user_query[:50]}... → Key facts: {raw_data[:100]}... → Answer: {final_answer[:50]}..."
     shared_memory.save_fact(shared_fact)
     

@@ -35,7 +35,6 @@ def create_summarizer_agent(
         "- Do NOT fetch external data.\n"
     )
 
-
     return create_agent(
         model=llm,
         tools = [structure_as_json, generate_markdown_table],

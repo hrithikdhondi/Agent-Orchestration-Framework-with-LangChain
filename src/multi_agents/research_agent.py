@@ -19,6 +19,8 @@ def create_research_agent(
         "- Collect factual or structured information.\n"
         "- Use tools only when the plan requires them.\n\n"
 
+        "You may choose an appropriate tool if the plan requires external data.\n\n"
+
         "Tool Usage Rules:\n"
         "- Use decompose_task when the plan asks for task decomposition.\n"
         "- Use search_shared_memory before researching new information.\n"

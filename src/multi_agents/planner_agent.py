@@ -47,7 +47,7 @@ def create_planner_agent(
         "Example:\n"
         "1. Decompose the user task into structured subtasks\n"
         "2. Search shared memory for related past knowledge\n"
-        "3. Research each subtask and collect raw data\n"
+        "3. If there exist any related data then use it, else research each subtask and collect raw data\n"
         "4. Analyze collected text to extract key points\n"
         "5. Pass results to the Summarizer Agent\n\n"
 

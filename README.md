@@ -108,3 +108,26 @@ Outcome:
 A reliable tool-enabled agent with transparent execution and graceful error recovery.
 
 If you want a 1-paragraph version or bullet-only ultra-short, I can trim it more.
+
+
+📌 Milestone 3: Multi-Agent Orchestration & Memory Management
+Overview
+
+In Milestone 3, the project was extended into a multi-agent system where specialized agents collaborate to solve tasks using planning, execution, and summarization. The focus is on agent coordination, memory usage, and controlled tool invocation.
+
+Agents Implemented
+
+Planner Agent
+Analyzes the user query and decides whether research is required. It generates a numbered execution plan and skips research for simple tasks.
+
+Research Agent
+Executes the Planner’s instructions step-by-step. It uses tools only when explicitly instructed and returns raw data without summarization.
+
+Summarizer Agent
+Converts raw research data into a clear, user-friendly final response without fetching new information.
+
+Memory Architecture
+
+Per-Agent Memory: Each agent maintains its own conversation history for context-aware reasoning.
+
+Shared Memory: A FAISS-based vector store stores important facts and provides relevant past knowledge to guide future decisions.

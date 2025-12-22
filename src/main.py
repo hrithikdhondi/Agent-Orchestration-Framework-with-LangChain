@@ -4,7 +4,7 @@ import time
 def main():
     print("=" * 70)
     print("   MULTI-AGENT ORCHESTRATION FRAMEWORK (LangChain)")
-    print("   🧠 Shared Memory + Per-Agent Memory Enabled")
+    print("   Shared Memory + Per-Agent Memory Enabled")
     print("=" * 70)
     print("Type 'exit' to quit | 'clear' to reset memory\n")
 

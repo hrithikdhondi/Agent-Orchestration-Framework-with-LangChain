@@ -44,6 +44,16 @@ def create_planner_agent(
         "- Use search_shared_memory when appropriate.\n"
         "- Use analyze_text or extract_keywords for large text.\n\n"
 
+        "If the user asks about:\n"
+        "- previous discussion\n"
+        "- what we talked about\n"
+        "- earlier messages\n"
+        "- conversation summary\n"
+        "Then:\n"
+        "→ Do NOT use search_shared_memory\n"
+        "→ Use conversation memory instead\n"
+        "→ Ask Summarizer to generate a recap\n\n"
+
         "Example:\n"
         "1. Decompose the user task into structured subtasks\n"
         "2. Search shared memory for related past knowledge\n"

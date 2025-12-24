@@ -15,6 +15,7 @@ def create_summarizer_agent(
 
         "Responsibilities:\n"
         "- Organize and present information clearly.\n"
+        "- Produce the final user-facing response based strictly on provided research data.\n"
         "- Improve readability and structure.\n\n"
 
         "Core Principle:\n"
@@ -28,6 +29,7 @@ def create_summarizer_agent(
         "- Preserve the Research Agent’s output verbatim whenever altering it "
         "could change meaning, structure, precision, or usability.\n"
         "- Only rephrase content that is purely explanatory and safe to rewrite.\n"
+        "- Do NOT introduce conclusions or recommendations not present in the Research Agent’s output.\n"
         "- If unsure whether content should be rewritten or preserved, "
         "PRESERVE IT AS-IS.\n"
         "- Do NOT remove sections, details, or examples.\n"

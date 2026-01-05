@@ -1,133 +1,254 @@
-# Agent-Orchestration-Framework-with-LangChain
-Agent Orchestration Framework (LangChain + Gemini)
+# 🧠 Agent-Orchestration Framework with LangChain
 
-This project implements a simple AI Agent System using LangChain, LangGraph, and Google Gemini.
-The agent can call multiple custom tools to answer user queries more accurately.
+---
 
-**📌 Features:**
+> **A Modular Multi-Agent Reasoning & Workflow System**  
+> LangChain • Gemini LLM • Tool-Based Reasoning • Memory-Oriented Architecture • Intelligent Routing
 
-Agents
+This project implements an **advanced multi-agent orchestration framework** using **LangChain** and **Google Gemini**.  
+Unlike a traditional chatbot, the system dynamically **routes user input**, orchestrates **specialized agents**, and executes **multi-step workflows** such as research, summarization, and professional email composition.
 
-create_basic_gemini_agent() – simple agent with a fixed system prompt
+The focus of this project is on **how intelligence is structured, routed, and orchestrated**, not just how responses are generated.
 
-create_template_gemini_agent() – agent using PromptTemplate (recommended)
+---
 
+## 📌 Project Highlights
+---
 
+- 🧩 **True Multi-Agent Architecture** with strict role separation  
+- 🧠 **Planner → Researcher → Summarizer → Email Agent** workflows  
+- 🛠 **Explicit Tool-Based Reasoning** (no hallucinated tool use)  
+- 🔁 **Central Orchestrator** coordinating agents and memory  
+- 🧭 **Intelligent Input Router** (CHAT / CLARIFY / COMPLEX_TASK)  
+- 🧠 **Per-Agent Memory + Shared FAISS Memory**  
+- 🌐 **Backend–Frontend Ready Architecture**  
+- 📈 **Milestone-Based System Evolution**
 
-**Tools:**
+---
 
-greet(name) – returns a greeting
+## 🧠 High-Level System Overview
+---
 
-get_weather(city) – fetches live weather using wttr.in
+```text
+User Input
+   │
+   ▼
+Input Router
+   │
+   ├── CHAT ─────────► Chat Agent (Conversational LLM)
+   │
+   ├── CLARIFY ──────► Follow-up Question
+   │
+   └── COMPLEX_TASK
+           │
+           ▼
+     Orchestrator
+           │
+           ▼
+     Planner Agent
+           │   (decides execution plan)
+           ▼
+     Research Agent
+           │   (tools + shared memory)
+           ▼
+     Summarizer Agent
+           │
+           ├──► Email Compose Agent (if email intent)
+           │
+           ▼
+       Final Answer
+```
+## 🧠 Memory Layers
+---
 
-calculate(expression) – safe math calculator
+- **Session Memory**
+  - Maintains short-term chat context
+  - Used by the Chat Agent and Input Router
+  - Resettable via the `clear` command
 
-gen_password(length) – generates secure passwords
+- **Agent Memory**
+  - Isolated memory per agent
+  - Prevents cross-agent contamination
+  - Stores intermediate reasoning and outputs
 
-get_time(tz) – returns 12-hour formatted time (UTC / IST / LOCAL)
+- **Shared Memory (FAISS Vector Store)**
+  - Long-term, persistent knowledge storage
+  - Powered by Gemini embeddings
+  - Enables memory-aware reasoning across sessions
+  - Stores reusable facts and summarized insights
 
+---
 
-**📂 Project Files:**
+## 🤖 Agents Implemented
+---
 
-agents.py      - agent creation (basic + template)
+| Agent Name | Responsibility |
+|-----------|---------------|
+| **Planner Agent** | Analyzes intent and generates a strict execution plan |
+| **Research Agent** | Executes the plan using tools and shared memory |
+| **Summarizer Agent** | Converts raw research into user-facing output |
+| **Email Compose Agent** | Formats finalized content into professional emails |
+| **Chat Agent** | Handles casual conversational interactions |
+| **Orchestrator** | Controls agent execution flow and memory lifecycle |
 
-tools.py       - tool definitions
+---
 
-main.py        - interactive chatbot
+## 🧭 Intelligent Routing
+---
 
-demo.py        - quick test for all tools using the agent
+The system does **not treat every user input as a task**.
 
-.env.example   - API key template
+Each input is classified into one of the following modes:
 
-requirements.txt
+- **CHAT**
+  - Casual conversation
+  - Greetings, acknowledgements, opinions
+  - No agent orchestration
 
+- **CLARIFY**
+  - Task intent exists
+  - Required information is missing
+  - System asks exactly one follow-up question
 
-**🔧 Setup:**
+- **COMPLEX_TASK**
+  - Multi-step reasoning required
+  - Tool usage or memory access
+  - Full multi-agent orchestration
 
-python -m venv .venv
+This routing design mirrors **production-grade LLM systems**.
 
-.venv\Scripts\activate
+---
 
+## 🛠 Tools Implemented
+---
+
+| Tool | Purpose |
+|-----|--------|
+| `greet(name)` | Returns a greeting |
+| `get_weather(city)` | Fetches live weather data |
+| `calculate(expression)` | Safe mathematical evaluation |
+| `gen_password(length)` | Secure password generation |
+| `get_time(tz)` | Current time (UTC / IST / LOCAL) |
+| `read_file(path)` | Read text-based files |
+| `write_file(path, content)` | Write content to files |
+| `append_file(path, content)` | Append content to files |
+| `analyze_text(text)` | Extract key points |
+| `extract_keywords(text)` | Keyword extraction |
+| `decompose_task(goal)` | Task decomposition |
+| `search_shared_memory(query)` | Shared memory lookup |
+| `prepare_memory_entry(content)` | Prepare memory entries |
+| `structure_as_json()` | Structured JSON output |
+| `generate_markdown_table()` | Markdown table generation |
+
+All tools are **explicitly invoked** and **never hallucinated**.
+
+---
+
+## 📂 Project Structure
+---
+
+```text
+src/
+├── Backend/
+│   └── app/
+│       ├── main.py
+│       ├── routes.py
+│       └── schemas.py
+│
+├── Frontend/
+│   └── app.py
+│
+├── chat/
+│   └── chat_agent.py
+│
+├── multi_agents/
+│   ├── planner_agent.py
+│   ├── research_agent.py
+│   ├── summarizer_agent.py
+│   └── email_compose_agent.py
+│
+├── router/
+│   ├── input_router.py
+│   ├── task_router.py
+│   └── state.py
+│
+├── faiss_index/
+│
+├── orchestrator.py
+├── memory.py
+├── shared_memory.py
+├── tools.py
+│
+├── main.py
+├── main_single_agent.py
+├── test_chat_history.py
+│
+├── .env.example
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## ▶️ How to Run
+
+### 1️⃣ Install Dependencies
+~~~bash
 pip install -r requirements.txt
+~~~
 
+### 2️⃣ Configure Environment Variables
+~~~bash
+cp .env.example .env
+~~~
 
-**Create a .env file:**
-GOOGLE_API_KEY=your_api_key_here
+Add your Gemini API key in `.env`:
+~~~bash
+GEMINI_API_KEY=your_api_key_here
+~~~
 
+### 3️⃣ Run the Multi-Agent System
+~~~bash
+python src/main.py
+~~~
 
-**▶️ Run the Agent (interactive):**
-python main.py
+### 💬 Commands
+- Type a query to start
+- `clear` → reset memory
+- `exit` → quit the program
 
+---
 
-**🧪 Quick Tool Demo:**
-python demo.py
+## 📈 Project Evolution
 
+| Milestone | Description |
+|----------|-------------|
+| Milestone 1 | Single-agent setup with basic prompts |
+| Milestone 2 | Tool integration and safe execution |
+| Milestone 3 | Multi-agent orchestration with memory |
+| Milestone 4 | Intelligent routing, workflow automation & API layer |
 
-**This will test:**
+---
 
-Weather
+## 🎯 Design Philosophy
 
-Calculator
+- Architecture-first over UI-first
+- Explicit reasoning over implicit behavior
+- Routing before execution
+- Memory as a first-class component
+- Explainability over black-box responses
 
-Password generation
+---
 
-Time tool
+## 📜 License
 
-**✔ Milestone 1 Completed**
+This project is licensed under the MIT License.
 
-Basic agent + environment setup
+---
 
-Tools integrated
+## ✅ Final Note
 
-Template-based agent
-
-Demo script included
-
-📌 Milestone 2: Tool Integration & API Calling
-
-Objective:
-Extend the LangChain agent with custom tools, API access, and robust error handling.
-
-Key Updates:
-
-Integrated multiple custom tools using LangChain @tool
-
-Added log_tool decorator for Thought–Action–Observation logging
-
-Implemented error handling for:
-
-Invalid user inputs
-
-API failures (timeouts, bad responses)
-
-Unsafe or invalid calculations
-
-Guided the agent via prompts to use tools appropriately
-
-Outcome:
-A reliable tool-enabled agent with transparent execution and graceful error recovery.
-
-If you want a 1-paragraph version or bullet-only ultra-short, I can trim it more.
-
-
-📌 Milestone 3: Multi-Agent Orchestration & Memory Management
-Overview
-
-In Milestone 3, the project was extended into a multi-agent system where specialized agents collaborate to solve tasks using planning, execution, and summarization. The focus is on agent coordination, memory usage, and controlled tool invocation.
-
-Agents Implemented
-
-Planner Agent
-Analyzes the user query and decides whether research is required. It generates a numbered execution plan and skips research for simple tasks.
-
-Research Agent
-Executes the Planner’s instructions step-by-step. It uses tools only when explicitly instructed and returns raw data without summarization.
-
-Summarizer Agent
-Converts raw research data into a clear, user-friendly final response without fetching new information.
-
-Memory Architecture
-
-Per-Agent Memory: Each agent maintains its own conversation history for context-aware reasoning.
-
-Shared Memory: A FAISS-based vector store stores important facts and provides relevant past knowledge to guide future decisions.
+This project is intentionally architecture-first.  
+It demonstrates how real-world LLM agent systems are designed and orchestrated,
+not just how they respond.
+``

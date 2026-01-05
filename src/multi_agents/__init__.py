@@ -1,3 +1,4 @@
 from .planner_agent import create_planner_agent
 from .research_agent import create_research_agent
 from .summarizer_agent import create_summarizer_agent
+from .email_compose_agent import create_email_compose_agent

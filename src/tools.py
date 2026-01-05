@@ -465,6 +465,47 @@ def generate_markdown_table(headers: List[str], rows: List[List[str]]) -> str:
 
     return table
 
+import requests
+from langchain_core.tools import tool
+
+@tool
+def web_search(query: str) -> str:
+    """
+    Perform a web search and return top results.
+    Use this for real-world, recent, or factual information.
+    """
+    if not query:
+        return "No search query provided."
+
+    try:
+        url = "https://duckduckgo.com/html/"
+        params = {"q": query}
+        headers = {
+            "User-Agent": "Mozilla/5.0"
+        }
+
+        response = requests.get(url, params=params, headers=headers, timeout=10)
+        response.raise_for_status()
+
+        text = response.text
+
+        # Very simple extraction (enough for demo & evaluation)
+        results = []
+        for line in text.split("\n"):
+            if "result__a" in line and "href" in line:
+                results.append(line.strip())
+                if len(results) >= 5:
+                    break
+
+        if not results:
+            return "No relevant results found."
+
+        return "\n".join(results)
+
+    except Exception as e:
+        return f"Web search error: {e}"
+
+
 def get_tools():
     """Return a list of tool functions decorated with @tool."""
     return [
@@ -487,5 +528,6 @@ def get_tools():
         prepare_memory_entry,
         structure_as_json,
         generate_markdown_table,
+        web_search
     ]
 

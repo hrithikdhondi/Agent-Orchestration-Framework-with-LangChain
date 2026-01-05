@@ -21,6 +21,11 @@ def create_summarizer_agent(
         "Core Principle:\n"
         "- Do NOT lose information.\n\n"
 
+        "BEHAVIOR RULES\n"
+        "- If Research Data is provided, summarize and polish it.\n"
+        "- If NO research data is provided or you are instructed to generate directly, "
+        "generate the answer yourself.\n\n"
+
         "Tool Usage Rules:\n"
         "- You may use structure_as_json to organize information.\n"
         "- You may use generate_markdown_table for comparisons or listings only when it is needed.\n\n"

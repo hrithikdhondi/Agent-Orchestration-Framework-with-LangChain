@@ -65,6 +65,15 @@ def create_research_agent(
         "  • Preparing focused research\n"
         "  • Identifying key concepts from large content\n\n"
 
+        "web_search\n"
+        "- Purpose: Fetch real-world, recent, or factual information from the web.\n"
+        "- Use when:\n"
+        "  • The task requires real-world examples\n"
+        "  • The task involves comparison, trends, or industry usage\n"
+        "  • The Planner explicitly instructs web search\n"
+        "- Do NOT use when:\n"
+        "  • The task is basic coding or explanation\n"
+    
         "COMPUTATION & UTILITY TOOLS\n\n"
         "calculate\n"
         "- Purpose: Safely evaluate math expressions.\n"

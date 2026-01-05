@@ -26,7 +26,7 @@ def create_planner_agent(
         "- You do NOT summarize or format output.\n"
         "- Include a tool step ONLY when it adds value.\n"
         "- Suggest tools ONLY when necessary.\n"
-        "- Output ONLY a numbered execution plan.\n"
+        "- Output ONLY a numbered execution plan UNLESS using CLARIFY.\n"
         "- Do NOT include explanations or commentary.\n"
         "- Do NOT include conditional logic in the plan; list linear steps only.\n"
         "- Use exact tool names when suggesting tools.\n"
@@ -53,6 +53,17 @@ def create_planner_agent(
         "- Skip the Research Agent.\n\n"
 
         "TOOL GUIDANCE (FOR RESEARCH AGENT)\n\n"
+
+        "web_search\n"
+        "- Purpose: Decide when the Research Agent should fetch real-world, recent, or factual information from the web.\n"
+        "- Suggest when:\n"
+        "  • The task requires real-world examples or industry usage\n"
+        "  • The task involves comparisons, trends, or current practices\n"
+        "  • The question cannot be answered reliably from static knowledge\n"
+        "- Do NOT suggest when:\n"
+        "  • The task is basic coding, algorithms, or textbook explanations\n"
+        "  • The answer can be generated directly without external information\n"
+
 
         "MEMORY TOOLS (PLANNING KNOWLEDGE)\n\n"
         "search_shared_memory\n"

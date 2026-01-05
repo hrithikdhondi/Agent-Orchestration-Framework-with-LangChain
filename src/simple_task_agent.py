@@ -7,29 +7,36 @@ from langchain_core.prompts import PromptTemplate
 
 
 # WEEk - 1
-def create_basic_gemini_agent(model: str = "gemini-2.5-flash", temperature: float = 0.0):
-   
-    # Instantiate the Gemini-backed chat model (uses GEMINI_API_KEY env variable)
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain.agents import create_agent
+from tools import get_tools
+
+
+def create_basic_gemini_agent(
+    model: str = "gemini-2.5-flash",
+    temperature: float = 0.0
+):
     llm = ChatGoogleGenerativeAI(
         model=model,
         temperature=temperature
     )
 
     tools = get_tools()
-    checkpointer = MemorySaver()  # Short-term memory: stores conversation within a session
 
-    # Create agent using LangChain v1 API
     agent = create_agent(
         model=llm,
         tools=tools,
         system_prompt=(
-            "You are a helpful assistant"
-            "Answer user questions accurately and use available tools when needed."
-        ),
-        checkpointer=checkpointer  # Modern v1 approach - memory built-in via checkpointer 
+            "You are a reliable AI assistant. "
+            "Answer the user's query directly. "
+            "Use tools only when necessary."
+        )
     )
 
     return agent
+
+
+
 
 # Week 2 upgrade
 basic_template = PromptTemplate(

@@ -1,44 +1,122 @@
-from orchestrator import run_multi_agent_workflow
 import time
+from router.input_router import route_input
+from router.state import state
+from chat.chat_agent import chat_response
+from router.task_router import run_task
+
 
 def main():
     print("=" * 70)
     print("   MULTI-AGENT ORCHESTRATION FRAMEWORK (LangChain)")
-    print("   Shared Memory + Per-Agent Memory Enabled")
+    print("   Intelligent Routing + Chat + Multi-Agent Tasks")
     print("=" * 70)
-    print("Type 'exit' to quit | 'clear' to reset memory\n")
+    print("Type 'exit' to quit | 'clear' to reset session\n")
 
     while True:
         try:
-            query = input("\n🗣️ you: ").strip()
+            user_input = input("\n🗣️ you: ").strip()
 
-            if not query:
+            if not user_input:
                 continue
-            if query.lower() == "exit":
+
+            if user_input.lower() == "exit":
                 print("\n👋 Goodbye!")
                 break
-            if query.lower() == "clear":
-                print("\n🧹 Memory cleared!")
+
+            if user_input.lower() == "clear":
+                state.chat_history.clear()
+                state.pending_task = None
+                print("\n🧹 Session state cleared!")
                 continue
 
-            print("\n🤖 Agents thinking...")
-            start_time = time.time()
-            
-            # Run multi-agent workflow (handles all memory automatically)
-            result = run_multi_agent_workflow(query)
-            
-            elapsed = time.time() - start_time
+            # =========================
+            # ROUTING DECISION
+            # =========================
+            decision = route_input(user_input, state)
+            print(f"[ROUTER] → {decision['mode']}")
 
-            print(f"🤖 Agent: Response  ({elapsed:.1f}s)")
-            print(result)
-            print("\n" + "-"*70)
+            start_time = time.time()
+
+            # =========================
+            # CHAT MODE
+            # =========================
+            if decision["mode"] == "CHAT":
+                reply = chat_response(user_input, state)
+                print("\n🤖", reply)
+                continue
+
+            # =========================
+            # CLARIFY MODE
+            # =========================
+            if decision["mode"] == "CLARIFY":
+                state.pending_task = {
+                    "original_query": user_input
+                }
+                print("\n🤖", decision["question"])
+                continue
+
+            # =========================
+            # RESUME MODE
+            # =========================
+            if decision["mode"] == "RESUME":
+                if not state.pending_task:
+                    print("\n⚠️ No pending task to resume.")
+                    continue
+
+                merged_query = (
+                    state.pending_task["original_query"]
+                    + " "
+                    + user_input
+                )
+                state.pending_task = None  # IMPORTANT: clear before execution
+
+                new_decision = route_input(merged_query, state)
+                print(f"[ROUTER] → {new_decision['mode']}")
+                print("\n🤖 Processing...")
+
+                output = run_task(
+                    merged_query,
+                    new_decision["mode"]
+                )
+
+                elapsed = time.time() - start_time
+                print("\n🤖 Agent:")
+                print(output)
+                print(f"\nResponse in ({elapsed:.1f}s)")
+                continue
+
+            # =========================
+            # COMPLEX TASK EXECUTION
+            # =========================
+            print("\n🤖 Processing...")
+            output = run_task(
+                user_input,
+                decision["mode"]
+            )
+
+            # If agent asks a follow-up question, pause workflow
+            if decision["mode"] == "COMPLEX_TASK" and output.strip().endswith("?"):
+                state.pending_task = {
+                    "original_query": user_input
+                }
+                print("\n🤖", output)
+                continue
+
+            elapsed = time.time() - start_time
+            print("\n🤖 Agent:")
+            print(output)
+            print(f"\nResponse in ({elapsed:.1f}s)")
 
         except KeyboardInterrupt:
             print("\n\n👋 Interrupted. Goodbye!")
             break
+
         except Exception as e:
+            # 🔴 CRITICAL FIX: RESET STATE ON ERROR
+            state.pending_task = None
             print(f"\n❌ System error: {e}")
-            print("🔄 Continuing...\n")
+            print("🛑 Task aborted. Please try again.\n")
+
 
 if __name__ == "__main__":
     main()

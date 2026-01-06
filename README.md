@@ -151,37 +151,37 @@ All tools are **explicitly invoked** and **never hallucinated**.
 src/
 ├── Backend/
 │   └── app/
-│       ├── main.py
-│       ├── routes.py
-│       └── schemas.py
+│       ├── main.py              # API entry point
+│       ├── routes.py            # Backend routes
+│       └── schemas.py           # Request/response schemas
 │
 ├── Frontend/
-│   └── app.py
+│   └── app.py                   # Frontend interface
 │
 ├── chat/
-│   └── chat_agent.py
+│   └── chat_agent.py            # Conversational chat agent
 │
 ├── multi_agents/
-│   ├── planner_agent.py
-│   ├── research_agent.py
-│   ├── summarizer_agent.py
-│   └── email_compose_agent.py
+│   ├── planner_agent.py         # Planner Agent
+│   ├── research_agent.py        # Research Agent
+│   ├── summarizer_agent.py      # Summarizer Agent
+│   └── email_compose_agent.py   # Email formatting agent
 │
 ├── router/
-│   ├── input_router.py
-│   ├── task_router.py
-│   └── state.py
+│   ├── input_router.py          # CHAT / CLARIFY / TASK routing
+│   ├── task_router.py           # Task dispatcher
+│   └── state.py                 # Session state
 │
-├── faiss_index/
+├── faiss_index/                 # Persistent shared memory
 │
-├── orchestrator.py
-├── memory.py
-├── shared_memory.py
-├── tools.py
+├── orchestrator.py              # Central agent orchestration
+├── memory.py                    # Per-agent memory
+├── shared_memory.py             # FAISS-based shared memory
+├── tools.py                     # Tool implementations
 │
-├── main.py
-├── main_single_agent.py
-├── test_chat_history.py
+├── main.py                      # Main execution entry
+├── main_single_agent.py         # Single-agent prototype
+├── test_chat_history.py         # Memory testing
 │
 ├── .env.example
 ├── requirements.txt

@@ -139,6 +139,7 @@ This routing design mirrors **production-grade LLM systems**.
 | `prepare_memory_entry(content)` | Prepare memory entries |
 | `structure_as_json()` | Structured JSON output |
 | `generate_markdown_table()` | Markdown table generation |
+| `web_search(query)` | Fetches real-world, recent, or factual information from the web |
 
 All tools are **explicitly invoked** and **never hallucinated**.
 

@@ -1,6 +1,6 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.agents import create_agent
-from tools import structure_as_json, generate_markdown_table
+from src.tools import structure_as_json, generate_markdown_table
 
 def create_summarizer_agent(
     model: str = "gemini-2.5-flash",

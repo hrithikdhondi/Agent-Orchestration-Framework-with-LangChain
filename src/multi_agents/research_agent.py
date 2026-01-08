@@ -1,6 +1,6 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.agents import create_agent
-from tools import get_tools
+from src.tools import get_tools
 
 
 def create_research_agent(

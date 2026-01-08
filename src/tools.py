@@ -13,6 +13,7 @@ import time
 import re
 from pathlib import Path
 from typing import List
+from tavily import TavilyClient
 
 
 # Milestone 2
@@ -465,42 +466,43 @@ def generate_markdown_table(headers: List[str], rows: List[List[str]]) -> str:
 
     return table
 
-import requests
-from langchain_core.tools import tool
-
 @tool
 def web_search(query: str) -> str:
     """
-    Perform a web search and return top results.
-    Use this for real-world, recent, or factual information.
+    Perform a real web search using Tavily API.
+    Returns clean, LLM-friendly results.
     """
     if not query:
         return "No search query provided."
 
+    api_key = os.getenv("TAVILY_API_KEY")
+    
+    if not api_key:
+        return "Tavily API key not configured."
+
     try:
-        url = "https://duckduckgo.com/html/"
-        params = {"q": query}
-        headers = {
-            "User-Agent": "Mozilla/5.0"
-        }
+        client = TavilyClient(api_key=api_key)
 
-        response = requests.get(url, params=params, headers=headers, timeout=10)
-        response.raise_for_status()
+        response = client.search(
+            query=query,
+            search_depth="basic",   # fast + enough for trends
+            max_results=5
+        )
 
-        text = response.text
-
-        # Very simple extraction (enough for demo & evaluation)
-        results = []
-        for line in text.split("\n"):
-            if "result__a" in line and "href" in line:
-                results.append(line.strip())
-                if len(results) >= 5:
-                    break
-
+        results = response.get("results", [])
         if not results:
             return "No relevant results found."
 
-        return "\n".join(results)
+        formatted = []
+        for r in results:
+            title = r.get("title", "No title")
+            content = r.get("content", "")
+            url = r.get("url", "")
+            formatted.append(f"{title}: {content} ({url})")
+
+        return "Top web results:\n" + "\n".join(
+            f"- {item}" for item in formatted
+        )
 
     except Exception as e:
         return f"Web search error: {e}"

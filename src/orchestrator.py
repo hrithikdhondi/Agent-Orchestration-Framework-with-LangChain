@@ -1,12 +1,12 @@
-from multi_agents import (
+from src.multi_agents import (
     create_planner_agent,
     create_research_agent,
     create_summarizer_agent,
     create_email_compose_agent
 )
 
-from memory import AgentMemory
-from shared_memory import SharedKnowledgeBase
+from src.memory import AgentMemory
+from src.shared_memory import SharedKnowledgeBase
 import uuid
 
 

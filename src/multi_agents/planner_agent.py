@@ -57,12 +57,13 @@ def create_planner_agent(
         "web_search\n"
         "- Purpose: Decide when the Research Agent should fetch real-world, recent, or factual information from the web.\n"
         "- Suggest when:\n"
-        "  • The task requires real-world examples or industry usage\n"
-        "  • The task involves comparisons, trends, or current practices\n"
-        "  • The question cannot be answered reliably from static knowledge\n"
+        "  • The task requires up-to-date, time-sensitive, or verifiable facts\n"
+        "  • The task asks for statistics, numbers, regulations, pricing, or dates\n"
+        "  • The answer cannot be safely generated from general knowledge\n"
         "- Do NOT suggest when:\n"
-        "  • The task is basic coding, algorithms, or textbook explanations\n"
-        "  • The answer can be generated directly without external information\n"
+        "  • The task asks for general concepts, explanations, or high-level trends\n"
+        "  • The topic is commonly known and can be answered without sources\n\n"
+
 
 
         "MEMORY TOOLS (PLANNING KNOWLEDGE)\n\n"

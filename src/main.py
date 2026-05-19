@@ -29,25 +29,21 @@ def main():
                 print("\n🧹 Session state cleared!")
                 continue
 
-            # =========================
             # ROUTING DECISION
-            # =========================
             decision = route_input(user_input, state)
             print(f"[ROUTER] → {decision['mode']}")
 
             start_time = time.time()
 
-            # =========================
+
             # CHAT MODE
-            # =========================
             if decision["mode"] == "CHAT":
                 reply = chat_response(user_input, state)
                 print("\n🤖", reply)
                 continue
 
-            # =========================
+            
             # CLARIFY MODE
-            # =========================
             if decision["mode"] == "CLARIFY":
                 state.pending_task = {
                     "original_query": user_input
@@ -55,9 +51,7 @@ def main():
                 print("\n🤖", decision["question"])
                 continue
 
-            # =========================
             # RESUME MODE
-            # =========================
             if decision["mode"] == "RESUME":
                 if not state.pending_task:
                     print("\n⚠️ No pending task to resume.")
@@ -68,7 +62,7 @@ def main():
                     + " "
                     + user_input
                 )
-                state.pending_task = None  # IMPORTANT: clear before execution
+                state.pending_task = None  
 
                 new_decision = route_input(merged_query, state)
                 print(f"[ROUTER] → {new_decision['mode']}")
@@ -85,9 +79,7 @@ def main():
                 print(f"\nResponse in ({elapsed:.1f}s)")
                 continue
 
-            # =========================
             # COMPLEX TASK EXECUTION
-            # =========================
             print("\n🤖 Processing...")
             output = run_task(
                 user_input,
@@ -112,7 +104,7 @@ def main():
             break
 
         except Exception as e:
-            # 🔴 CRITICAL FIX: RESET STATE ON ERROR
+        # CRITICAL FIX: RESET STATE ON ERROR
             state.pending_task = None
             print(f"\n❌ System error: {e}")
             print("🛑 Task aborted. Please try again.\n")
